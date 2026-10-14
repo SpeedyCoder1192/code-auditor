@@ -1,6 +1,6 @@
 [package]
 name = "code-auditor"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 rust-version = "1.80"
 description = "Code auditing with local or cloud models. CLI and TUI in one binary."
@@ -10,7 +10,7 @@ homepage = "https://github.com/SpeedyCoder1192/code-auditor"
 readme = "README.md"
 keywords = ["audit", "security", "llm", "ollama", "tui"]
 categories = ["command-line-utilities", "development-tools"]
-exclude = ["/demo", "dist-workspace.toml", "/packaging", "/.github", "action.yml", ".pre-commit-hooks.yaml"]
+exclude = ["/ad.txt", "/demo", "dist-workspace.toml", "/packaging", "/.github", "action.yml", ".pre-commit-hooks.yaml"]
 
 [[bin]]
 name = "auditor"

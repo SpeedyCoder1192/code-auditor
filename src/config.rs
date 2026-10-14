@@ -8,6 +8,8 @@ use std::{
 use anyhow::{Context, Result};
 use serde::Deserialize;
 
+const DEFAULT_AD_URL: &str = "https://raw.githubusercontent.com/SpeedyCoder1192/code-auditor/main/ad.txt";
+
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct AdsConfig {
@@ -18,7 +20,7 @@ pub struct AdsConfig {
 
 impl Default for AdsConfig {
     fn default() -> Self {
-        Self { enabled: true, url: None }
+        Self { enabled: true, url: Some(DEFAULT_AD_URL.into()) }
     }
 }
 

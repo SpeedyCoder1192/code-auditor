@@ -1,12 +1,13 @@
 # code-auditor
 
-An AI code reviewer for your terminal that runs **free and offline**: no account,
-no API key, and your code never leaves your machine. It uses
-[Ollama](https://ollama.com) locally, or a cloud model if you give it a key.
+Finds bugs and security holes in your code with a language model and suggests
+patches you can apply with one key. By default it runs on your own machine
+through [Ollama](https://ollama.com), so it costs nothing, works offline and
+your code stays local. If you have an OpenAI-compatible or Gemini key, it can
+use that instead.
 
-`auditor` finds bugs and security problems, explains them, and offers a patch you
-can apply with one key. It opens a TUI when run in a terminal and prints plain
-results when piped, so the same binary works in CI and git hooks.
+The binary is called `auditor`. Run it in a terminal and you get a TUI; pipe it
+and you get plain text, which is what you want in CI and git hooks.
 
 ![auditor finding SQL and command injection in a Python file](demo/demo.gif)
 
@@ -50,7 +51,7 @@ GitHub Actions. Without `api-key` the action runs Ollama on the runner, which is
 free but takes a few minutes:
 
     - uses: actions/checkout@v4
-    - uses: SpeedyCoder1192/code-auditor@v0.1.0
+    - uses: SpeedyCoder1192/code-auditor@v1.0.0
       with:
         path: src/
         fail-on: high
@@ -60,7 +61,7 @@ free but takes a few minutes:
 
     repos:
       - repo: https://github.com/SpeedyCoder1192/code-auditor
-        rev: v0.1.0
+        rev: v1.0.0
         hooks:
           - id: auditor
 
@@ -103,7 +104,7 @@ Environment variables win over the file at `~/.config/code-auditor/config.toml`
 
     [ads]
     enabled = true
-    url     = "https://example.com/line.txt"
+    url     = "https://raw.githubusercontent.com/SpeedyCoder1192/code-auditor/main/ad.txt"
 
 Variables: `AUDITOR_API_KEY`, `AUDITOR_PROVIDER`, `AUDITOR_MODEL`,
 `AUDITOR_BASE_URL`, `AUDITOR_LOCAL_URL`, `AUDITOR_LOCAL_MODEL`, `AUDITOR_AD_URL`,
@@ -112,13 +113,17 @@ Variables: `AUDITOR_API_KEY`, `AUDITOR_PROVIDER`, `AUDITOR_MODEL`,
 Keep the API key in the environment rather than the file if the file is
 shared or checked in.
 
-## Footer text (ad)
+## Footer ad
 
-The TUI footer can show one line of text fetched from `ads.url`. The request is
-a plain GET with no identifiers, the response is cached for 30 minutes under
-`~/.cache/code-auditor/ad.json`, and nothing is fetched or printed in CLI mode.
-Set `DISABLE_ADS=1` to turn it off. No URL is configured by default, so the
-footer shows a "sponsor this space" line until you set one.
+The TUI footer shows one line of text, read from
+[`ad.txt`](ad.txt) in this repo. It's a plain GET to raw.githubusercontent.com
+with no identifiers or cookies (GitHub sees your IP, as with any request). The
+line is cached for 30 minutes under `~/.cache/code-auditor/ad.json`, and the
+CLI never fetches or prints it. Set `DISABLE_ADS=1` or `ads.enabled = false` to
+turn it off, or point `ads.url` somewhere else.
+
+Want your line there? Open an issue titled "Sponsor". Payment is in USDC
+(Polygon or Ethereum), ETH or POL.
 
 ## Layout
 
@@ -126,7 +131,7 @@ footer shows a "sponsor this space" line until you set one.
     src/cli.rs         plain output, exit codes
     src/tui/           panes, key handling, highlighting, markdown rendering
     src/engine/        Engine trait; Ollama, OpenAI-style, Gemini
-    src/ads.rs         footer text fetch and cache
+    src/ads.rs         footer ad fetch and cache
     src/model.rs       findings, patch application
     src/scan.rs        file discovery
     src/config.rs      config file and environment
