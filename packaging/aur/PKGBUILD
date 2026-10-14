@@ -12,7 +12,7 @@ optdepends=('ollama: run audits locally without an API key')
 options=('!lto')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
 # Run `updpkgsums` after the v$pkgver tag exists on GitHub.
-sha256sums=('SKIP')
+sha256sums=('e7dc03d3d46733693362c6e865599e2c58c4e945cbd77ddbc89946f9b7012bb2')
 
 prepare() {
   cd "$pkgname-$pkgver"
