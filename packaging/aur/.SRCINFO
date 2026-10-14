@@ -12,6 +12,6 @@ pkgbase = code-auditor
 	optdepends = ollama: run audits locally without an API key
 	options = !lto
 	source = code-auditor-1.0.0.tar.gz::https://github.com/SpeedyCoder1192/code-auditor/archive/refs/tags/v1.0.0.tar.gz
-	sha256sums = e7dc03d3d46733693362c6e865599e2c58c4e945cbd77ddbc89946f9b7012bb2
+	sha256sums = 73ecbda6cab2ad0386772e26f2014ceac9244cea2b98b9ccd3e33e849273081c
 
 pkgname = code-auditor
