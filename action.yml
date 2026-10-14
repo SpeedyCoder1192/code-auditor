@@ -1,4 +1,4 @@
-name: code-auditor
+name: LLM Code Auditor
 description: Audit source code for bugs and security problems with a local (Ollama) or cloud model
 branding:
   icon: shield

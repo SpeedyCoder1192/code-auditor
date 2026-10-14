@@ -50,7 +50,7 @@ GitHub Actions. Without `api-key` the action runs Ollama on the runner, which is
 free but takes a few minutes:
 
     - uses: actions/checkout@v4
-    - uses: SpeedyCoder1192/code-auditor@v1.0.0
+    - uses: SpeedyCoder1192/code-auditor@v1
       with:
         path: src/
         fail-on: high
@@ -60,7 +60,7 @@ free but takes a few minutes:
 
     repos:
       - repo: https://github.com/SpeedyCoder1192/code-auditor
-        rev: v1.0.0
+        rev: v1.0.1
         hooks:
           - id: auditor
 
