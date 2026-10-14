@@ -10,7 +10,7 @@ homepage = "https://github.com/SpeedyCoder1192/code-auditor"
 readme = "README.md"
 keywords = ["audit", "security", "llm", "ollama", "tui"]
 categories = ["command-line-utilities", "development-tools"]
-exclude = ["/ad.txt", "/demo", "dist-workspace.toml", "/packaging", "/.github", "action.yml", ".pre-commit-hooks.yaml"]
+exclude = ["/ad.txt", "/demo", "dist-workspace.toml", "/.github", "action.yml", ".pre-commit-hooks.yaml"]
 
 [[bin]]
 name = "auditor"

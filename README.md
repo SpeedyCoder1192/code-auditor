@@ -14,7 +14,6 @@ and you get plain text, which is what you want in CI and git hooks.
 ## Install
 
     cargo install code-auditor                # from crates.io
-    yay -S code-auditor                       # Arch Linux (AUR)
 
 Prebuilt binaries for Linux, macOS and Windows are on the
 [releases page](https://github.com/SpeedyCoder1192/code-auditor/releases), or:
@@ -136,5 +135,4 @@ Want your line there? Open an issue titled "Sponsor". Payment is in USDC
     src/scan.rs        file discovery
     src/config.rs      config file and environment
     action.yml         GitHub Action
-    packaging/aur/     Arch Linux package
     demo/              vhs script for the demo GIF
