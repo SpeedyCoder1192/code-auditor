@@ -8,6 +8,8 @@ no API key, and your code never leaves your machine. It uses
 can apply with one key. It opens a TUI when run in a terminal and prints plain
 results when piped, so the same binary works in CI and git hooks.
 
+![auditor finding SQL and command injection in a Python file](demo/demo.gif)
+
 ## Install
 
     cargo install code-auditor                # from crates.io
@@ -19,7 +21,8 @@ Prebuilt binaries for Linux, macOS and Windows are on the
     curl --proto '=https' --tlsv1.2 -LsSf https://github.com/SpeedyCoder1192/code-auditor/releases/latest/download/code-auditor-installer.sh | sh
 
 Then install [Ollama](https://ollama.com) and run `auditor`. The default model
-(about 1 GB) is downloaded on first use.
+(about 4.7 GB) is downloaded on first use. On a machine without a GPU, set
+`local_model = "qwen2.5-coder:1.5b"` for a faster but much less accurate model.
 
 To build from source: `cargo build --release` (Rust 1.80 or newer). The binary
 ends up in `target/release/auditor`.
@@ -77,7 +80,7 @@ With `AUDITOR_API_KEY` set, requests go to the cloud:
 
 Without a key, requests go to a local server:
 
-- Ollama at `http://127.0.0.1:11434`, model `qwen2.5-coder:1.5b`, pulled on first use
+- Ollama at `http://127.0.0.1:11434`, model `qwen2.5-coder:7b`, pulled on first use
 - llama.cpp's `llama-server` with `local_backend = "llamacpp"`
 
 `--local` forces local even when a key is set.
@@ -91,7 +94,7 @@ Environment variables win over the file at `~/.config/code-auditor/config.toml`
     cloud_model    = "gpt-4o-mini"
     local_backend  = "ollama"                # ollama | llamacpp
     local_url      = "http://127.0.0.1:11434"
-    local_model    = "qwen2.5-coder:1.5b"    # or e.g. "llama3:8b-instruct-q4_0"
+    local_model    = "qwen2.5-coder:7b"      # or e.g. "llama3:8b-instruct-q4_0"
     auto_pull      = true
     chunk_lines    = 300
     max_file_bytes = 524288

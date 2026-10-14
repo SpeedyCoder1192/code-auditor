@@ -20,7 +20,12 @@ Show
 Type "auditor scan sample/"
 Sleep 500ms
 Enter
-Sleep 14s
+Sleep 3s
+# Cut most of the model wait (about 45 s on a CPU) out of the GIF.
+Hide
+Sleep 55s
+Show
+Sleep 3s
 Type "n"
 Sleep 2s
 Type "n"

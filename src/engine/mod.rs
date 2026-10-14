@@ -124,7 +124,7 @@ pub async fn audit_source(engine: &dyn Engine, source: &str, chunk_lines: usize)
         let mut parsed = None;
         for _ in 0..2 {
             let raw = engine.complete(SYSTEM, &user).await?;
-            if let Some(f) = parse_findings(&raw, start, end) {
+            if let Some(f) = parse_findings(&raw, start, chunk) {
                 parsed = Some(f);
                 break;
             }
@@ -136,7 +136,8 @@ pub async fn audit_source(engine: &dyn Engine, source: &str, chunk_lines: usize)
     Ok(out)
 }
 
-fn parse_findings(raw: &str, start: usize, end: usize) -> Option<Vec<Finding>> {
+fn parse_findings(raw: &str, start: usize, chunk: &[&str]) -> Option<Vec<Finding>> {
+    let end = start + chunk.len() - 1;
     let a = raw.find('{')?;
     let b = raw.rfind('}')?;
     if b < a {
@@ -163,12 +164,28 @@ fn parse_findings(raw: &str, start: usize, end: usize) -> Option<Vec<Finding>> {
             if e.start_line < start || e.end_line > end || e.end_line < e.start_line {
                 f.fix = None;
             } else {
-                e.new_text = strip_line_numbers(&sanitize(&e.new_text, true));
+                let text = strip_line_numbers(&sanitize(&e.new_text, true));
+                e.new_text = reindent(&text, chunk[e.start_line - start]);
             }
         }
         out.push(f);
     }
     Some(out)
+}
+
+/// Some models drop the base indentation of the lines they replace. If the
+/// replacement starts flush left but the original first line is indented,
+/// indent every non-empty line by that much, keeping relative indentation.
+fn reindent(text: &str, original: &str) -> String {
+    let indent = &original[..original.len() - original.trim_start().len()];
+    let flush = text.lines().find(|l| !l.trim().is_empty()).is_some_and(|l| !l.starts_with([' ', '\t']));
+    if indent.is_empty() || !flush {
+        return text.to_string();
+    }
+    text.lines()
+        .map(|l| if l.trim().is_empty() { l.to_string() } else { format!("{indent}{l}") })
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 /// Some models copy the "  12 | " gutter into their replacement. Remove it
@@ -190,4 +207,20 @@ fn strip_line_numbers(s: &str) -> String {
         })
         .collect::<Vec<_>>()
         .join("\n")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::reindent;
+
+    #[test]
+    fn reindent_restores_dropped_indent() {
+        assert_eq!(reindent("a()\n\nif x:\n    b()", "    old()"), "    a()\n\n    if x:\n        b()");
+    }
+
+    #[test]
+    fn reindent_leaves_indented_text_alone() {
+        assert_eq!(reindent("    a()", "    old()"), "    a()");
+        assert_eq!(reindent("a()", "old()"), "a()");
+    }
 }

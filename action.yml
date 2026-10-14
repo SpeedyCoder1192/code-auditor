@@ -15,7 +15,7 @@ inputs:
     description: Cloud API key. Leave empty to run Ollama on the runner instead (free, slower)
     default: ""
   model:
-    description: Model name. Defaults to qwen2.5-coder:1.5b locally, gpt-4o-mini in the cloud
+    description: Model name. Defaults to qwen2.5-coder:7b locally, gpt-4o-mini in the cloud
     default: ""
   version:
     description: Release tag to install, e.g. v0.1.0

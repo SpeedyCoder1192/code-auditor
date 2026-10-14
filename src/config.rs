@@ -51,7 +51,7 @@ impl Default for Config {
             cloud_base_url: None,
             local_backend: "ollama".into(),
             local_url: "http://127.0.0.1:11434".into(),
-            local_model: "qwen2.5-coder:1.5b".into(),
+            local_model: "qwen2.5-coder:7b".into(),
             auto_pull: true,
             chunk_lines: 300,
             max_file_bytes: 512 * 1024,
