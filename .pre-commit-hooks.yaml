@@ -1,0 +1,7 @@
+- id: auditor
+  name: code-auditor
+  description: Audit changed source files with a local or cloud model
+  entry: auditor scan --cli --fail-on high
+  language: rust
+  types_or: [rust, python, javascript, jsx, ts, tsx, go, java, kotlin, c, c++, c#, ruby, php, swift, scala, shell, sql, lua, perl, elixir, haskell]
+  require_serial: true

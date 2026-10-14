@@ -1,0 +1,62 @@
+name: code-auditor
+description: Audit source code for bugs and security problems with a local (Ollama) or cloud model
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  path:
+    description: Files or directories to scan, separated by spaces
+    default: "."
+  fail-on:
+    description: Fail the step on a finding at or above this severity (low, medium, high, critical)
+    default: high
+  api-key:
+    description: Cloud API key. Leave empty to run Ollama on the runner instead (free, slower)
+    default: ""
+  model:
+    description: Model name. Defaults to qwen2.5-coder:1.5b locally, gpt-4o-mini in the cloud
+    default: ""
+  version:
+    description: Release tag to install, e.g. v0.1.0
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Install auditor
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        if [ "$VERSION" = latest ]; then
+          url=https://github.com/SpeedyCoder1192/code-auditor/releases/latest/download/code-auditor-installer.sh
+        else
+          url=https://github.com/SpeedyCoder1192/code-auditor/releases/download/$VERSION/code-auditor-installer.sh
+        fi
+        curl --proto '=https' --tlsv1.2 -LsSf "$url" | sh
+        echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+    - name: Start Ollama
+      if: inputs.api-key == ''
+      shell: bash
+      run: |
+        command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+        curl -fs http://127.0.0.1:11434/api/version >/dev/null || (ollama serve >/dev/null 2>&1 &)
+        for _ in $(seq 30); do curl -fs http://127.0.0.1:11434/api/version >/dev/null && exit 0; sleep 1; done
+        echo "Ollama did not start" >&2
+        exit 1
+
+    - name: Scan
+      shell: bash
+      env:
+        AUDITOR_API_KEY: ${{ inputs.api-key }}
+        MODEL: ${{ inputs.model }}
+        SCAN_PATH: ${{ inputs.path }}
+        FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        if [ -n "$MODEL" ]; then
+          if [ -n "$AUDITOR_API_KEY" ]; then export AUDITOR_MODEL="$MODEL"; else export AUDITOR_LOCAL_MODEL="$MODEL"; fi
+        fi
+        # SCAN_PATH is split on spaces on purpose.
+        auditor scan $SCAN_PATH --cli -v --fail-on "$FAIL_ON"

@@ -1,0 +1,35 @@
+# Maintainer: SpeedyCoder1192 <SpeedyCoder1192@users.noreply.github.com>
+pkgname=code-auditor
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Audit source code with a local (Ollama) or cloud model. CLI and TUI in one binary"
+arch=('x86_64' 'aarch64')
+url="https://github.com/SpeedyCoder1192/code-auditor"
+license=('MIT')
+depends=('gcc-libs' 'glibc')
+makedepends=('cargo')
+optdepends=('ollama: run audits locally without an API key')
+options=('!lto')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+# Run `updpkgsums` after the v$pkgver tag exists on GitHub.
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$pkgname-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable
+  cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
+}
+
+build() {
+  cd "$pkgname-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable
+  export CARGO_TARGET_DIR=target
+  cargo build --frozen --release
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm755 target/release/auditor "$pkgdir/usr/bin/auditor"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}
